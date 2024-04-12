@@ -35,12 +35,12 @@ backgroundSize: contain
 
 # Breve Especificação da Aplicação
 
-## Metodologia
-Esta especificação detalha o plano de desenvolvimento do Moov.olt usando o protocolo [OCPP](https://en.wikipedia.org/wiki/Open_Charge_Point_Protocol). A aplicação consistirá em dois componentes principais: <br>
-1. **Serviço de Ponto de Recarga (SPR)**
-  - _API de Interação direta com estações de carregamento físicas (permissões, controle de carregamento, pagamentos, etc)._
-2. **Sistema de Gerenciamento de Fila (SGF)**
-  - _Utilizando o protocolo [AMQP](https://pt.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) para promover descongestionamento de dados._
+## Arquitetura do Servidor
+A aplicação adere ao protocolo [**OCPP**](https://en.wikipedia.org/wiki/Open_Charge_Point_Protocol). Ela consistirá num esquema cliente-servidor com dois componentes principais: <br>
+1. [**Serviço de Ponto de Recarga (SPR)**]()
+  - API de interação direta com estações de carregamento físicas
+2. [**Sistema de Gerenciamento (SG)**]()
+  - Responsável por permissões, pagamentos, etc. O [**SG**]() consiste em um modelo [**cliente-servidor**]() com o [**Servidor**]() se comunicando via protocolo [**AMQP**](https://pt.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) com os [**SPRs**]()
 
 
 <style>
@@ -60,16 +60,15 @@ class: text-xl
 ---
 
 # 1. Serviço de Ponto de Recarga (SPR)
-## ![image](/SPR-Server.svg)
+## ![image](/SPR-API.svg)
 
 ::right::
 
+- Executa tarefas fornecidas pelo [**Servidor**]().
 - Responsável pela interação direta com as estações de carregamento físicas.
 - Estabelece e gerencia conexões [Websocket](https://pt.wikipedia.org/wiki/WebSocket).
 - Recebe e envia dados de/para as estações de carregamento.
 - Não toma decisões sobre permissões ou capacidade de carregamento.
-- Executa tarefas fornecidas pelo **Sistema de Gerenciamento de Fila (SGF)**.
-- Utiliza o protocolo [AMQP](https://pt.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) para comunicação com o sistema de gerenciamento.
 
 <style>
 h1 {
@@ -84,15 +83,15 @@ h1 {
 ---
 layout: image-right
 backgroundSize: contain
-image: /SGF.svg
+image: /SG.svg
 ---
 
-# 2. Sistema de Gerenciamento de Fila (SGF)
+# 2. Sistema de Gerenciamento (SG)
 
 - Gerencia a lógica de negócios, incluindo permissões, controle do processo de carregamento e pagamentos.
-- Não tem conhecimento sobre o funcionamento interno do **SPR**.
-- Aceita dados dos serviços de **SPR**, toma decisões e envia tarefas de volta para execução baseda no tipo de mensagem.
-- Utiliza o protocolo **AMQP** para comunicação com os **SPRs**.
+- Não tem conhecimento sobre o funcionamento interno do [**SPR**]().
+- Aceita dados dos serviços de [**SPR**](), toma decisões e envia tarefas de volta para execução baseda no tipo de mensagem (serviço solicitado).
+- Utiliza o protocolo [**AMQP**]() para comunicação com os [**SPRs**]().
 
 <style>
 h1 {
@@ -118,7 +117,11 @@ image: /Rust-cases.png
 ---
 
 # **Rust**
-  - Linguagem de programação de alta performance com ênfase em eficiência e segurança.
+Linguagem de Programação
+
+  - **Alta performance e vasto ecossistema Web**
+  - **Uso eficiente de recursos do sistema**
+  - **Segurança verificável e garantida**
 
 <style>
 h1 {
@@ -130,7 +133,7 @@ h1 {
 }
 </style>
 
-> ### Exemplo - Servidor Axum
+#### Exemplo - Servidor Axum
 ```rust twoslash
 use axum::routing::{get, post};
 use serde::{Deserialize, Serialize};
@@ -156,9 +159,9 @@ backgroundSize: contain
 ---
 
 # OpenAPI
-OpenAPI, sendo a **linguagem de descrição de API** mais utilizada, apresenta diversas vantagens:
+Linguagem de descrição de API
 
-- A ampla adoção do **[OpenAPI](https://www.openapis.org/)** por fornecedores de ferramentas oferece flexibilidade na seleção de fornecedores.
+- **[OpenAPI](https://www.openapis.org/)** é compatível com diversos ferramentas de desenvolvimento oferecendo flexibilidade na seleção de fornecedores.
 - O conhecimento comum do OpenAPI entre desenvolvedores e engenheiros proporciona flexibilidade na contratação de pessoal.
 - A <span v-mark.green>abstração multi-linguagem</span> facilita a adoção de inovações nos comportamentos da API, evitando a necessidade de reescritas totais.
 
@@ -179,12 +182,13 @@ backgroundSize: contain
 ---
 
 # RabbitMQ
+Sistema de comunicação Middleware
 
-- O [RabbitMQ](https://www.rabbitmq.com/) suporta vários protocolos padrão abertos, incluindo [**AMQP**](https://pt.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) 1.0 e [**MQTT**](https://pt.wikipedia.org/wiki/MQTT) 5. Existem várias bibliotecas de cliente disponíveis, que podem ser usadas com a linguagem de programação de sua escolha. Sem bloqueio de fornecedor!
+- O [RabbitMQ](https://www.rabbitmq.com/) suporta vários protocolos padrão abertos, incluindo [**AMQP**](https://pt.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) e [**MQTT**](https://pt.wikipedia.org/wiki/MQTT). Existem várias bibliotecas de cliente disponíveis, que podem ser usadas com a linguagem de programação de sua escolha. Sem bloqueio de fornecedor!
 
-- Oferece muitas opções para definir como suas mensagens vão do publicador para um ou muitos consumidores. Roteamento, filtragem, streaming, federação, etc.
+- Oferece muitas opções para definir como suas mensagens vão do publicador (aplicação) para um ou muitos consumidores (roteamento, filtragem, streaming, etc).
 
-- Garantia que a troca de mensagens não será interceptada, fornecendo segurança ao usuário.
+- Garantia que a troca de mensagens não será interceptada, fornecendo segurança ao consumidores da aplicação.
 
 <style>
   h1 {
@@ -203,12 +207,12 @@ backgroundSize: contain
 ---
 
 # PostgreSQL
+Gerenciador de Banco de Dados SQL
 
+- Conformidade com SQL
 - Variedade rica de tipos de dados proporcionando flexibilidade na criação de diversas estruturas de dados
-
-2. Recursos de indexação, transações e particionamento de tabelas, o PostgreSQL garante um tratamento eficiente de operações concorrentes e processamento de dados de alta performance.
-
-3. **Segurança**: O PostgreSQL possui um framework de segurança robusto com suporte para vários métodos de autenticação, mecanismos de controle de acesso e segurança de nível de coluna/linha, garantindo integridade e confidencialidade dos dados.
+- [**Multi Processamento**](): recursos de indexação, transações e particionamento de tabelas favorecem operações concorrentes e processamento de alta performance.
+- [**Segurança**](): possui um framework de segurança robusto com suporte para vários métodos de autenticação garantindo integridade e confidencialidade dos dados.
 
 <style>
   h1 {
@@ -227,9 +231,9 @@ backgroundSize: contain
 ---
 
 # Docker
-- Oferece ambientes isolados (Máquinas Virtuais Linux) para aplicativos, garantindo que cada aplicativo execute sem interferência de outros.
+- Oferece ambientes isolados ([**Máquinas Virtuais Linux**](https://pt.wikipedia.org/wiki/Virtualiza%C3%A7%C3%A3o)) para aplicativos, garantindo que cada aplicativo execute sem interferência de outros.
 - Os contêineres compartilham o mesmo kernel do sistema operacional em uso, resultando em uma utilização mais eficiente de recursos em comparação com máquinas virtuais tradicionais.
-- **Portabilidade garantida**: os contêineres podem ser executados em qualquer lugar (localhost ou nuvem) mantendo o mesmo comportamento.
+- <span v-mark.cyan>[**Portabilidade garantida**]()</span>: os contêineres podem ser executados em qualquer lugar (`localhost` ou nuvem) mantendo o mesmo comportamento.
 
 <style>
   h1 {
@@ -246,7 +250,7 @@ preload: false
 layout: center
 ---
 
-# Tecnologias do Frontend
+# TECNOLOGIAS DO FRONTEND
 
 ---
 layout: image-right
@@ -255,9 +259,9 @@ image: /TypeScript.svg
 ---
 
 # **TypeScript:**
-- Com tipagem forte e um conceito de interfaces, TypeScript torna mais fácil trabalhar em projetos grandes e complexos, fornecendo maior clareza e segurança.
-- **Tipagem Estática**: oferece verificação de tipos estáticos durante o desenvolvimento, detectando erros antes mesmo da execução do código.
-- **Integração com JavaScript**: TypeScript é um superconjunto de JavaScript, oferecendo compatibilidade total com o vasto ecossistema JavaScript.
+- [**Integração com JavaScript**](): sendo apenas um superconjunto do [**JavaScript**](), oferece compatibilidade total com o vasto ecossistema [**JavaScript**]().
+- [**Adição de Tipos**](): com tipagem forte e um conceito de interfaces, o TypeScript torna mais fácil trabalhar em projetos grandes e complexos, fornecendo maior clareza e segurança.
+- <span v-mark.blue>[**Tipagem Estática**]()</span>: oferece verificação de tipos estáticos durante o desenvolvimento, detectando erros antes mesmo da execução do código.
 
 <style>
   h1 {
@@ -276,9 +280,9 @@ image: UI-UX.svg
 ---
 
 # React
-- A **Componentização** do React permite dividir a interface do usuário em componentes reutilizáveis, facilitando o desenvolvimento e manutenção de aplicações.
-- Utilizando o **Virtual DOM**, temos uma atualização de página apenas nas partes necessárias da interface, resultando em um melhor desempenho e experiência do usuário.
-- O **fluxo unidirecional** de dados em React simplifica o gerenciamento de estado, tornando-o mais previsível e fácil de depurar. Especialmente com [**Redux**](https://redux-toolkit.js.org/).
+- [**Componentização**](): permite dividir a interface do usuário em componentes reutilizáveis, facilitando o desenvolvimento e manutenção de aplicações.
+- [**Fluxo unidirecional**](): simplifica o gerenciamento de estado, tornando-o mais previsível e fácil de depurar. Extensível através do [**Redux**](https://redux-toolkit.js.org/).
+- <span v-mark.cyan>[**Virtual DOM**]():</span> oferece uma atualização de página apenas nas partes necessárias da interface, resultando em um melhor desempenho e experiência do usuário.
 
 
 <style>
@@ -298,9 +302,9 @@ image: TailwindCSS.svg
 ---
 # TailWindCSS
 
-- **Produtividade**: TailwindCSS oferece classes pré-definidas para estilos comuns, acelerando o processo de desenvolvimento e permitindo prototipagem rápida.
-- **Customização Flexível**: Com base em utilitários, TailwindCSS facilita a personalização de estilos sem a necessidade de escrever CSS personalizado, proporcionando flexibilidade total.
-- **Manutenção Simplificada**: A abordagem baseada em utilitários torna a manutenção do código mais simples, pois as alterações de estilo são centralizadas e facilmente identificáveis.
+- [**Produtividade**](): oferece classes pré-definidas para estilos comuns, acelerando o processo de desenvolvimento e permitindo prototipagem rápida.
+- [**Customização Flexível**](): com base em classes utilitárias, facilita a personalização de estilos sem a obrigatoriedade de escrever [**CSS**]() personalizado, proporcionando flexibilidade total.
+- [**Manutenção Simplificada**](): A abordagem baseada em utilitários torna a manutenção do código mais simples, pois as alterações de estilo são centralizadas e facilmente identificáveis.
 
 
 <style>
@@ -318,11 +322,11 @@ image: TailwindCSS.svg
 # Recursos Principais
 
 ### **Escalabilidade**
-- A arquitetura permite fácil escalabilidade adicionando **SPRs** adicionais, tornando-a adequada para gerenciar um grande número de estações de carregamento físicas sem congestionamentos.
+- A arquitetura permite fácil escalabilidade adicionando [**SPRs**]() adicionais, tornando-a adequada para gerenciar um grande número de estações de carregamento físicas sem depender de um único [**Servidor**]().
 ### **Flexibilidade e Extensibilidade**
-- A separação de funções entre o **SPR** e o **SGF** permite a fácil adição de novos recursos sem alterações significativas na arquitetura geral do sistema.
+- A separação de funções entre o [**SPR**]() e o [**SG**]() permite a fácil adição de novos recursos sem alterações significativas na arquitetura geral do sistema.
 ### **Gerenciamento de Desempenho**
-- O sistema baseado em fila de mensagens, aliado ao backend escrito em **Rust**, permite multi-processamento, controle e prioridade de processamento, garantindo uma resposta rápida às solicitações dos clientes.
+- O sistema baseado em fila de mensagens, aliado ao backend escrito em [**Rust**](), permite multi-processamento, controle e prioridade de processamento, garantindo uma resposta rápida às solicitações dos clientes.
 ### **Abertura e Extensibilidade**
 - Utilizando padrões abertos e tecnologias open-source populares, permite fácil integração com outros sistemas e serviços, como sistemas de pagamento, plataformas de controle e aplicações de terceiros.
 
@@ -331,11 +335,15 @@ image: TailwindCSS.svg
 # Plano de Desenvolvimento
 
 ## **Configuração do Backend**
-- Desenvolvimento dos componentes do backend, incluindo o **SPR** e o **SGF**.
+- Desenvolvimento dos componentes do backend, incluindo o [**SPR**]() e o [**SG**](), com as seguintes prioridades:
+    1. Primeiramente offline (conexão de internet apenas para sincronia de dados)
+    2. Monitoramento das funções do hardware
+    3. Gestão financeira
+    4. Cadastro de clientes
 ## **Desenvolvimento do Frontend**
-- Desenvolvimento da interface do usuário logo após a finalização do backend.
+- Integração da [UI]() com o backend logo após a finalização do mesmo.
 ## **Modelagem do Banco de Dados**
-- Design e implementação do esquema do banco de dados todos os testes de integridade de dados passarem como válidos.
+- Design e implementação do esquema do banco de dados após o cadastro de clientes e todos os testes de integridade de dados passarem como válidos.
 ## **Melhorias e Novas Funcionalidades**
 - Após todos os testes passarem como válidos, pensaremos em novas ideias e melhorias para o futuro da aplicação.
 
