@@ -163,7 +163,7 @@ Linguagem de descrição de API
 
 - **[OpenAPI](https://www.openapis.org/)** é compatível com diversos ferramentas de desenvolvimento oferecendo flexibilidade na seleção de fornecedores.
 - O conhecimento comum do OpenAPI entre desenvolvedores e engenheiros proporciona flexibilidade na contratação de pessoal.
-- A <span v-mark.green>abstração multi-linguagem</span> facilita a adoção de inovações nos comportamentos da API, evitando a necessidade de reescritas totais.
+- A <span v-mark.circle.green>abstração multi-linguagem</span> facilita a adoção de inovações nos comportamentos da API, evitando a necessidade de reescritas totais.
 
 <style>
   h1 {
@@ -233,7 +233,7 @@ backgroundSize: contain
 # Docker
 - Oferece ambientes isolados ([**Máquinas Virtuais Linux**](https://pt.wikipedia.org/wiki/Virtualiza%C3%A7%C3%A3o)) para aplicativos, garantindo que cada aplicativo execute sem interferência de outros.
 - Os contêineres compartilham o mesmo kernel do sistema operacional em uso, resultando em uma utilização mais eficiente de recursos em comparação com máquinas virtuais tradicionais.
-- <span v-mark.cyan>[**Portabilidade garantida**]()</span>: os contêineres podem ser executados em qualquer lugar (`localhost` ou nuvem) mantendo o mesmo comportamento.
+- <span v-mark.circle.cyan>[**Portabilidade garantida**]()</span>: os contêineres podem ser executados em qualquer lugar (`localhost` ou nuvem) mantendo o mesmo comportamento.
 
 <style>
   h1 {
@@ -261,7 +261,7 @@ image: /TypeScript.svg
 # **TypeScript:**
 - [**Integração com JavaScript**](): sendo apenas um superconjunto do [**JavaScript**](), oferece compatibilidade total com o vasto ecossistema [**JavaScript**]().
 - [**Adição de Tipos**](): com tipagem forte e um conceito de interfaces, o TypeScript torna mais fácil trabalhar em projetos grandes e complexos, fornecendo maior clareza e segurança.
-- <span v-mark.blue>[**Tipagem Estática**]()</span>: oferece verificação de tipos estáticos durante o desenvolvimento, detectando erros antes mesmo da execução do código.
+- <span v-mark.circle.blue>[**Tipagem Estática**]()</span>: oferece verificação de tipos estáticos durante o desenvolvimento, detectando erros antes mesmo da execução do código.
 
 <style>
   h1 {
@@ -282,7 +282,7 @@ image: UI-UX.svg
 # React
 - [**Componentização**](): permite dividir a interface do usuário em componentes reutilizáveis, facilitando o desenvolvimento e manutenção de aplicações.
 - [**Fluxo unidirecional**](): simplifica o gerenciamento de estado, tornando-o mais previsível e fácil de depurar. Extensível através do [**Redux**](https://redux-toolkit.js.org/).
-- <span v-mark.cyan>[**Virtual DOM**]():</span> oferece uma atualização de página apenas nas partes necessárias da interface, resultando em um melhor desempenho e experiência do usuário.
+- <span v-mark.circle.cyan>[**Virtual DOM**]():</span> oferece uma atualização de página apenas nas partes necessárias da interface, resultando em um melhor desempenho e experiência do usuário.
 
 
 <style>
