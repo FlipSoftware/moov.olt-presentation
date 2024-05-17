@@ -14,13 +14,20 @@ drawings:
 transition: slide-left
 # enable MDC Syntax: https://sli.dev/guide/syntax#mdc-syntax
 mdc: true
+fonts:
+  sans: Montserrat
 ---
 
-# MOOV.VOLT
+<h1 class="scale-150 font-black">
+
+  # MOOV.OLT
+
+</h1>
+
 
 Transformando a Mobilidade Elétrica no Brasil
 
-<div class="pt-12">
+<div class="pt-12 animate-pulse">
   <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
     Pressione para o lado <kbd><carbon:arrow-right class="inline"/></kbd>
   </span>
@@ -33,7 +40,12 @@ image: /App-workflow.svg
 backgroundSize: contain
 ---
 
-# Breve Especificação da Aplicação
+<h1 class="b rounded-xl p8">
+
+  # Breve Especificação da Aplicação
+
+</h1>
+
 
 ## Arquitetura do Servidor
 A aplicação adere ao protocolo [**OCPP**](https://en.wikipedia.org/wiki/Open_Charge_Point_Protocol). Ela consistirá num esquema cliente-servidor com dois componentes principais: <br>
